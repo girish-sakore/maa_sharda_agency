@@ -1,0 +1,2 @@
+class AllocationDraft < ApplicationRecord
+end
