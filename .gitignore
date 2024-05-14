@@ -33,3 +33,4 @@
 /public
 .keep
 
+db/schema.rb
