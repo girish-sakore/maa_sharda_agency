@@ -11,5 +11,19 @@ module UserBlock
     validates :name, presence: true, length: { maximum: 50 }
     validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :password, presence: true, length: { minimum: 8 }
+    validates :type, presence: true
+
+    # Public methods
+    def is_admin?
+      self.is_a?(UserBlock::Admin)
+    end
+
+    def is_caller?
+      self.is_a?(UserBlock::Caller)
+    end
+
+    def is_executive?
+      self.is_a?(UserBlock::Executive)
+    end
   end
 end
