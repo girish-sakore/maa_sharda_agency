@@ -2,7 +2,8 @@ class LoginsController < ApplicationController
   include JwtHelper
 
   def create
-    user = User.find_by(email: params[:email])
+    debugger
+    user = UserBlock::User.find_by(email: params[:email])
     if user && user.authenticate(params[:password])
       payload = { user_id: user.id }
       token = encode_token(payload)

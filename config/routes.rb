@@ -9,4 +9,5 @@ Rails.application.routes.draw do
   resources :allocation_drafts
 
   post "import_allocation", to: "allocation_drafts#import"
+  post 'login', to: 'logins#create'
 end
