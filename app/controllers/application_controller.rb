@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::API
+  include ActionController::Helpers
   include JwtHelper
-
+  
   private
 
   def authorize_request

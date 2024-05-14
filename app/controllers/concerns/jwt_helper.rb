@@ -2,7 +2,7 @@ module JwtHelper
   require 'jwt'
 
   # SECRET_KEY = Rails.application.secrets.secret_key_base
-  SECRET_KEY = ENV['SECRET_KEY']
+  SECRET_KEY = ENV.fetch('SECRET_KEY')
 
   def encode_token(payload, exp = 24.hours.from_now)
     payload[:exp] = exp.to_i

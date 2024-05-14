@@ -10,7 +10,6 @@ class ImportAllocationService
   def import
     errors = []
     success = []
-    binding.b
 
     excel = Roo::Excelx.new(@file_path)
     (2..excel.last_row).each do |i|
