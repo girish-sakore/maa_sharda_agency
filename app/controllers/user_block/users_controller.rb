@@ -2,7 +2,7 @@ module UserBlock
   class UsersController < ApplicationController
     prepend_before_action :authorize_request, except: :create
     before_action :set_user, only: %i[ show update destroy ]
-    
+
     # GET /users
     def index
       @users = User.all
