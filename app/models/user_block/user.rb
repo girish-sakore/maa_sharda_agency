@@ -11,6 +11,7 @@ module UserBlock
     validates :name, presence: true, length: { maximum: 50 }
     validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :password, presence: true, length: { minimum: 8 }
+    validate :valid_type
     validates :type, presence: true
 
     # Public methods
@@ -24,6 +25,15 @@ module UserBlock
 
     def is_executive?
       self.is_a?(UserBlock::Executive)
+    end
+
+    private
+
+    def valid_type
+      allowed_types = ['UserBlock::Admin', 'UserBlock::Caller', 'UserBlock::Executive']
+      unless allowed_types.include?(self.type)
+        errors.add(:type, "Invalid type")
+      end
     end
   end
 end

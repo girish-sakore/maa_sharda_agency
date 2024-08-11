@@ -75,6 +75,8 @@ GEM
       minitest (>= 5.1)
       mutex_m
       tzinfo (~> 2.0)
+    addressable (2.8.6)
+      public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.2)
     base64 (0.2.0)
     bcrypt (3.1.20)
@@ -110,8 +112,13 @@ GEM
       rdoc
       reline (>= 0.4.2)
     json (2.7.2)
+    json-schema (4.3.0)
+      addressable (>= 2.8)
     jwt (2.8.1)
       base64
+    kaminari (0.17.0)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     language_server-protocol (3.17.0.3)
     loofah (2.22.0)
       crass (~> 1.0.2)
@@ -145,6 +152,7 @@ GEM
     pg (1.5.6)
     psych (5.1.2)
       stringio
+    public_suffix (5.0.5)
     puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.7.3)
@@ -216,6 +224,21 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.13.1)
+    rswag (2.13.0)
+      rswag-api (= 2.13.0)
+      rswag-specs (= 2.13.0)
+      rswag-ui (= 2.13.0)
+    rswag-api (2.13.0)
+      activesupport (>= 3.1, < 7.2)
+      railties (>= 3.1, < 7.2)
+    rswag-specs (2.13.0)
+      activesupport (>= 3.1, < 7.2)
+      json-schema (>= 2.2, < 5.0)
+      railties (>= 3.1, < 7.2)
+      rspec-core (>= 2.14)
+    rswag-ui (2.13.0)
+      actionpack (>= 3.1, < 7.2)
+      railties (>= 3.1, < 7.2)
     rubocop (1.63.2)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -254,6 +277,7 @@ DEPENDENCIES
   faker
   fast_jsonapi
   jwt
+  kaminari (~> 0.17.0)
   pg
   puma (~> 6.0)
   rack-cors
@@ -261,6 +285,7 @@ DEPENDENCIES
   redis (~> 4.0)
   roo
   rspec-rails (~> 5.0)
+  rswag
   rubocop
   tzinfo-data
 

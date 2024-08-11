@@ -3,6 +3,7 @@ module UserBlock
     # skip_before_action :authorize_user, only: :some_action_to_skip_authorization
 
     before_action :authorize_request
+    before_action :not_admin?
     before_action :set_admin, only: %i[ show update destroy ]
 
     # GET /admins

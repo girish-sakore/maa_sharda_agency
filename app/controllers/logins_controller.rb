@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class LoginsController < ApplicationController
   include JwtHelper
+  skip_before_action :authorize_request
 
   def create
     user = UserBlock::User.find_by(email: params[:email])
