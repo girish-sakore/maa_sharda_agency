@@ -1,4 +1,3 @@
-# app/services/data_import_service.rb
 
 class ImportAllocationService
   require 'roo'
