@@ -5,7 +5,7 @@ module UserBlock
 
     # GET /users
     def index
-      @users = User.where('not TYPE=?', "UserBlock::Admin")
+      @users = UserBlock::User.where('not TYPE=?', "UserBlock::Admin")
       metadata = { total_users: @users.count}
       render json: { metadata: metadata, users: serialize_users }, status: :ok
     end
