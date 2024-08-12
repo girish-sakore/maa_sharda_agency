@@ -5,9 +5,9 @@ module UserBlock
 
     # GET /users
     def index
-      @users = User.all
-
-      render json: @users, status: :ok
+      @users = User.where('not TYPE=?', "UserBlock::Admin")
+      metadata = { total_users: @users.count}
+      render json: { metadata: metadata, users: serialize_users }, status: :ok
     end
 
     # GET /users/1
@@ -54,9 +54,22 @@ module UserBlock
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
+
       def set_user
         @user = User.find(params[:id])
+      end
+
+      def serialize_users
+        users = []
+          @users.each do |user|
+            users << {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        type: user.type
+                      }
+          end
+        users
       end
 
       # Only allow a list of trusted parameters through.

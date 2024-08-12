@@ -4,20 +4,22 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
 
-  # Defines the root path route ("/")
-  # root "articles#index"  resources :users
+  post 'sign_up', to: 'user_block/users#create'
+  post 'login', to: 'logins#create'
 
   namespace :user_block do
     resources :admins
     resources :users
   end
-  post 'sign_up', to: 'user_block/users#create'
 
-  resources :allocation_drafts
+  resources :allocation_drafts do
+    collection do
+      post :import_allocation
+      post :assign_caller
+      post :assign_executive
+    end
+  end
 
-  post "import_allocation", to: "allocation_drafts#import"
-  post 'login', to: 'logins#create'
-
-  # Public apis without auth token
+  # No token required
   get 'types', to: 'public_apis#types'
 end
