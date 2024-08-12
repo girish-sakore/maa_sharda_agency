@@ -59,13 +59,5 @@ gem 'jwt'
 gem 'roo' # , '~> 2.10', '>= 2.10.1'
 
 gem 'rswag' # documentation
-
-gem 'kaminari', '~> 0.17.0'
-
+gem 'kaminari'
 gem 'ransack'
-
-
-
-
-
-
