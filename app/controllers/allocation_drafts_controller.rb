@@ -1,4 +1,5 @@
 class AllocationDraftsController < ApplicationController
+  before_action :authorize_request
   before_action :not_admin?
 
   def import_allocation
