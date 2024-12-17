@@ -2,20 +2,18 @@ module UserBlock
   class UsersController < ApplicationController
     # prepend_before_action :authorize_request
     before_action :set_user, only: %i[ show update destroy ]
+    skip_before_action :authorize_request, only: :index
 
-    # GET /users
     def index
       @users = UserBlock::User.where('not TYPE=?', "UserBlock::Admin")
       metadata = { total_users: @users.count}
       render json: { metadata: metadata, users: serialize_users }, status: :ok
     end
 
-    # GET /users/1
     def show
-      render json: @user, status: :ok
+      render json: serialize_user(@user), status: :ok
     end
 
-    # POST /users
     def create
       unless @current_user.is_admin?
         return permission_denied
@@ -33,48 +31,51 @@ module UserBlock
       end
 
       if @user.save
-        render json: @user, status: :created
+        render json: serialize_user(@user), status: :created
       else
         render json: @user.errors, status: :unprocessable_entity
       end
     end
 
-    # PATCH/PUT /users/1
     def update
-      if @user.update(user_params)
-        render json: @user
+      if @user.update(required_user_params)
+        render json: serialize_user(@user)
       else
         render json: @user.errors, status: :unprocessable_entity
       end
     end
 
-    # DELETE /users/1
     def destroy
       @user.destroy
+      render json: serialize_user(@user), status: :ok
     end
 
     private
 
-      def set_user
-        @user = User.find(params[:id])
-      end
+    def set_user
+      @user = User.find(params[:id])
+    end
 
-      def serialize_users
-        users = []
-          @users.each do |user|
-            users << {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        type: user.type
-                      }
-          end
-        users
+    def serialize_users
+      users = []
+      @users.each do |user|
+        users << serialize_user(user)
       end
+      users
+    end
 
-      # Only allow a list of trusted parameters through.
-      def required_user_params
-        params.permit(:email, :password, :name)
-      end
+    def serialize_user(user)
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        type: user.type
+      }
+    end
+
+    # Only allow a list of trusted parameters through.
+    def required_user_params
+      params.permit(:email, :password, :name)
+    end
   end
 end

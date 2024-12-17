@@ -49,9 +49,8 @@ group :development, :test do
   gem 'faker'
   gem 'rspec-rails', '~> 5.0'
   gem 'rubocop'
-  # gem 'rubocop-factory_bot'
-  # gem 'rubocop-rails'
-  # gem 'rubocop-rspec'
+  gem 'simplecov'
+  gem 'rswag'
 end
 
 gem 'jwt'

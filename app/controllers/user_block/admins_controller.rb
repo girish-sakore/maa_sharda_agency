@@ -41,6 +41,7 @@ module UserBlock
     # DELETE /admins/1
     def destroy
       @admin.destroy
+      render json: { message: "#{@admin.name}(#{@admin.email}) is deleted!" }, status: :ok
     end
 
     private
@@ -51,7 +52,7 @@ module UserBlock
 
       # Only allow a list of trusted parameters through.
       def admin_params
-        params.fetch(:admin, {})
+        params.fetch(:admin, params.permit!)
       end
   end
 end
