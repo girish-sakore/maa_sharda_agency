@@ -55,8 +55,8 @@ end
 
 gem 'jwt'
 
-gem 'roo' # , '~> 2.10', '>= 2.10.1'
-
+gem 'roo' # , '~> 2.10', '>= 2.10.1' # to read xlsx file
+gem 'write_xlsx' # to create xlsx file
 
 gem 'ransack'
 

@@ -10,7 +10,10 @@ class ImportAllocationService
     errors = []
     success = []
 
+    raise Errno::ENOENT, "No such file or directory @ #{@file_path}" unless File.exist?(@file_path)
+
     excel = Roo::Excelx.new(@file_path)
+
     (2..excel.last_row).each do |i|
       row = excel.row(i)
       begin
