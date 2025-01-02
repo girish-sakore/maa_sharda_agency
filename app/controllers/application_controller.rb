@@ -14,12 +14,10 @@ class ApplicationController < ActionController::API
   def authorize_request
     token = request.headers['Authorization']
     if token.present?
-      begin
-        decoded_token = decode_token(token)
-        @current_user = UserBlock::User.find(decoded_token['user_id'])
-      rescue JWT::DecodeError
-        render json: { error: 'Invalid token' }, status: :unauthorized
-      end
+      decoded_token = decode_token(token)
+      return render json: { error: 'Invalid token' }, status: :unauthorized if decoded_token.nil?
+
+      @current_user = UserBlock::User.find(decoded_token['user_id'])
     else
       render json: { error: 'Token not provided' }, status: :unauthorized
     end

@@ -37,7 +37,7 @@ class AllocationDraftsController < ApplicationController
 
   def assign_caller
     caller_id = params[:caller_id]
-    allocation_draft_ids = params[:allocation_draft_ids]
+    allocation_draft_ids = params[:allocation_draft_ids]&.map{|x| x.to_i}
 
     if caller_id.present? && allocation_draft_ids.present?
       caller = UserBlock::Caller.find_by(id: caller_id)
@@ -71,7 +71,7 @@ class AllocationDraftsController < ApplicationController
 
   def assign_executive
     executive_id = params[:executive_id]
-    allocation_draft_ids = params[:allocation_draft_ids]
+    allocation_draft_ids = params[:allocation_draft_ids]&.map{|x| x.to_i}
   
     if executive_id.present? && allocation_draft_ids.present?
       executive = UserBlock::Executive.find_by(id: executive_id)

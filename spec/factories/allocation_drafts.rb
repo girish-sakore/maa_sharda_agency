@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :allocation_draft do
-    caller { association :user, :caller }
-    executive { association :user, :executive }
+    caller { association :caller }
+    executive { association :executive }
     
     segment { "Segment A" }
     pool { "Pool 1" }
