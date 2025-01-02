@@ -1,7 +1,8 @@
 class AllocationDraftsController < ApplicationController
+  before_action :authorize_request
   before_action :not_admin?
 
-  def import
+  def import_allocation
     file_path = params[:file]
     errors, success = ImportAllocationService.new(file_path).import
     if errors.empty?
@@ -15,28 +16,91 @@ class AllocationDraftsController < ApplicationController
   end
 
   def index
-    query_service = AllocationDraftQueryService.new(params)
-    filtered_and_sorted_data = query_service.call
+    search = AllocationDraft.ransack(params[:q])
+    data = search.result
 
-    # Calculate pagination metadata
     page = params[:page] || 1
     per_page = params[:per_page] || 10
 
-    data = filtered_and_sorted_data[:data]
-    count = data.total_count
+    paginated_data = data.page(page).per(per_page)
+
     metadata = {
-      total: count,
-      current_page: data.current_page,
-      next_page: data.next_page,
-      prev_page: data.prev_page,
-      total_pages: data.total_pages
+      total: paginated_data.total_count,
+      current_page: paginated_data.current_page,
+      next_page: paginated_data.next_page,
+      prev_page: paginated_data.prev_page,
+      total_pages: paginated_data.total_pages
     }
 
-    # Render JSON response with metadata and data
-    render json: { metadata: metadata, data: data }
+    render json: { metadata: metadata, data: paginated_data }
   end
 
   def assign_caller
+    caller_id = params[:caller_id]
+    allocation_draft_ids = params[:allocation_draft_ids]
 
+    if caller_id.present? && allocation_draft_ids.present?
+      caller = UserBlock::Caller.find_by(id: caller_id)
+      if caller
+        allocation_drafts = AllocationDraft.where(id: allocation_draft_ids)
+        missing_ids = allocation_draft_ids - allocation_drafts.pluck(:id)
+
+        if allocation_drafts.any?
+          # Exclude already assigned drafts
+          drafts_to_update = allocation_drafts
+
+          drafts_to_update.update_all(caller_id: caller_id)
+
+          response_data = {
+            message: "Caller assigned with some conditions",
+            updated: allocation_drafts,
+            not_found: missing_ids
+          }
+
+          render json: response_data, status: :ok
+        else
+          render json: { error: "No valid AllocationDrafts found with the given IDs" }, status: :not_found
+        end
+      else
+        render json: { error: "Caller not found" }, status: :not_found
+      end
+    else
+      render json: { error: "Caller ID and Allocation Draft IDs are required" }, status: :bad_request
+    end
   end
+
+  def assign_executive
+    executive_id = params[:executive_id]
+    allocation_draft_ids = params[:allocation_draft_ids]
+  
+    if executive_id.present? && allocation_draft_ids.present?
+      executive = UserBlock::Executive.find_by(id: executive_id)
+      if executive
+        allocation_drafts = AllocationDraft.where(id: allocation_draft_ids)
+        missing_ids = allocation_draft_ids - allocation_drafts.pluck(:id)
+  
+        if allocation_drafts.any?
+          # Exclude already assigned drafts
+          drafts_to_update = allocation_drafts
+  
+          drafts_to_update.update_all(executive_id: executive_id)
+  
+          response_data = {
+            message: "Executive assigned with some conditions",
+            updated: allocation_drafts,
+            not_found: missing_ids
+          }
+  
+          render json: response_data, status: :ok
+        else
+          render json: { error: "No valid AllocationDrafts found with the given IDs" }, status: :not_found
+        end
+      else
+        render json: { error: "Executive not found" }, status: :not_found
+      end
+    else
+      render json: { error: "Executive ID and Allocation Draft IDs are required" }, status: :bad_request
+    end
+  end
+
 end

@@ -49,22 +49,17 @@ group :development, :test do
   gem 'faker'
   gem 'rspec-rails', '~> 5.0'
   gem 'rubocop'
-  # gem 'rubocop-factory_bot'
-  # gem 'rubocop-rails'
-  # gem 'rubocop-rspec'
+  gem 'simplecov'
+  gem 'rswag'
 end
 
 gem 'jwt'
 
-gem 'roo' # , '~> 2.10', '>= 2.10.1'
+gem 'roo' # , '~> 2.10', '>= 2.10.1' # to read xlsx file
+gem 'write_xlsx' # to create xlsx file
 
-gem 'rswag' # documentation
-
-gem 'kaminari', '~> 0.17.0'
-
+gem 'ransack'
 
 
-
-
-
-
+gem 'kaminari'
+gem 'ransack'
