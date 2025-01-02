@@ -10,6 +10,22 @@ RSpec.describe UserBlock::UsersController, type: :request do
   let(:token) { encode_token({ user_id: user.id }) }
   let(:headers) { { 'Authorization' => token } }
 
+  describe 'Unauthorized request' do
+    it 'returns the error token not provided' do
+      get "/user_block/users/#{caller.id}"
+      expect(response).to have_http_status(:unauthorized)
+      json_response = JSON.parse(response.body)
+      expect(json_response['error']).to eq('Token not provided')
+    end
+
+    it 'returns the error invalid token' do
+      get "/user_block/users/#{caller.id}", headers: { 'Authorization' => 'invalid-token' }
+      expect(response).to have_http_status(:unauthorized)
+      json_response = JSON.parse(response.body)
+      expect(json_response['error']).to eq('Invalid token')
+    end
+  end
+
   describe 'GET /users' do
     it 'returns a list of non-admin users' do
       get '/user_block/users', headers: headers
@@ -40,11 +56,31 @@ RSpec.describe UserBlock::UsersController, type: :request do
     let(:invalid_attributes) { { type: 'UserBlock::Caller', email: '', name: '', password: '' } }
 
     context 'when the current user is an admin' do
-      it 'creates a new user with valid attributes' do
+      it 'creates a new caller user with valid attributes' do
         post '/user_block/users', params: valid_attributes, headers: headers
         expect(response).to have_http_status(:created)
         json_response = JSON.parse(response.body)
         expect(json_response['type']).to eq('UserBlock::Caller')
+        expect(json_response['email']).to eq(valid_attributes[:email])
+      end
+
+      it 'creates a new executive user with valid attributes' do
+        valid_attributes[:type] = 'executive'
+        valid_attributes[:email] = 'new_executive@example.com'
+        post '/user_block/users', params: valid_attributes, headers: headers
+        expect(response).to have_http_status(:created)
+        json_response = JSON.parse(response.body)
+        expect(json_response['type']).to eq('UserBlock::Executive')
+        expect(json_response['email']).to eq(valid_attributes[:email])
+      end
+
+      it 'creates a new admin user with valid attributes' do
+        valid_attributes[:type] = 'admin'
+        valid_attributes[:email] = 'admin@example.com'
+        post '/user_block/users', params: valid_attributes, headers: headers
+        expect(response).to have_http_status(:created)
+        json_response = JSON.parse(response.body)
+        expect(json_response['type']).to eq('UserBlock::Admin')
         expect(json_response['email']).to eq(valid_attributes[:email])
       end
 
