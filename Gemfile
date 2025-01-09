@@ -46,7 +46,7 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot_rails'
-  gem 'faker'
+  gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'main'
   gem 'rspec-rails', '~> 5.0'
   gem 'rubocop'
   gem 'simplecov'
@@ -57,9 +57,6 @@ gem 'jwt'
 
 gem 'roo' # , '~> 2.10', '>= 2.10.1' # to read xlsx file
 gem 'write_xlsx' # to create xlsx file
-
-gem 'ransack'
-
 
 gem 'kaminari'
 gem 'ransack'

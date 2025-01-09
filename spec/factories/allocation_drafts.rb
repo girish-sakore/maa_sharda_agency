@@ -7,7 +7,7 @@ FactoryBot.define do
     pool { "Pool 1" }
     branch { "Branch X" }
     agreement_id { "AG123456" }
-    customer_name { "John Doe" }
+    customer_name { Faker::Name.name }
     pro { "PRO123" }
     bkt { "BKT001" }
     fos_name { "FOS Name" }
