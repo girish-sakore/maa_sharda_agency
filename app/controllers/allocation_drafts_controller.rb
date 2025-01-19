@@ -35,6 +35,17 @@ class AllocationDraftsController < ApplicationController
     render json: { metadata: metadata, data: paginated_data }
   end
 
+  def update
+    allocation = AllocationDraft.find(params[:id])
+    if allocation
+      if allocation.update(allocation_drafts_params)
+        render json: { allocation: allocation, message: 'data updated'}, status: :ok
+      else
+        render json: { message: 'error saving', error: allocation.errors }, status: :unprocessable_entity
+      end
+    end
+  end
+
   def assign_caller
     caller_id = params[:caller_id]
     allocation_draft_ids = params[:allocation_draft_ids]&.map{|x| x.to_i}
@@ -103,4 +114,10 @@ class AllocationDraftsController < ApplicationController
     end
   end
 
+
+    private
+
+    def allocation_drafts_params
+      params[:data].permit!
+    end
 end

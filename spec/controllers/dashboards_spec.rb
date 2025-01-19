@@ -12,7 +12,7 @@ RSpec.describe AllocationDraftsController, type: :request do
 
   describe 'GET /get_allocations' do
     let(:some_allocation) { allocation_drafts.first }
-    context 'successfull 1' do
+    context 'when valid query and export false' do
       it 'returns success response' do
         get '/dashboards/get_allocations',
         params: { :q => { :customer_name_cont => some_allocation.customer_name.first(5) } },
@@ -22,6 +22,14 @@ RSpec.describe AllocationDraftsController, type: :request do
         customer_names = parsed_response['data'].map { |allocation| allocation['customer_name'] }
         expect(customer_names).to include(some_allocation.customer_name)
         expect(parsed_response['message']).to eq('Data fetched successfully')
+      end
+    end
+    context 'when valid query and export true' do
+      it 'returns xlsx file' do
+        get '/dashboards/get_allocations',
+        params: { :export => 'true', :q => { :customer_name_cont => some_allocation.customer_name.first(5) } },
+        headers: headers
+        expect(response).to have_http_status(:ok)
       end
     end
     context 'when no allocations match the query' do
@@ -38,7 +46,7 @@ RSpec.describe AllocationDraftsController, type: :request do
     context 'when no query is given' do
       it 'returns the correct page of results' do
         get '/dashboards/get_allocations',
-            params: { page: 2, per_page: 3 },
+            params: { page: 1, per_page: 5 },
             headers: headers
         expect(response).to have_http_status(:ok)
         parsed_response = JSON.parse(response.body)

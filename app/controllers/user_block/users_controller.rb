@@ -2,7 +2,7 @@ module UserBlock
   class UsersController < ApplicationController
     # prepend_before_action :authorize_request
     before_action :set_user, only: %i[ show update destroy ]
-    skip_before_action :authorize_request, only: :index
+    # skip_before_action :authorize_request, only: :index
 
     def index
       @users = UserBlock::User.where('not TYPE=?', "UserBlock::Admin")
