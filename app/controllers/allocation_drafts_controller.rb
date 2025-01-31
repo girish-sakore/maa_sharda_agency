@@ -6,9 +6,9 @@ class AllocationDraftsController < ApplicationController
     file_path = params[:file]
     errors, success = ImportAllocationService.new(file_path).import
     if errors.empty?
-      render json: { notice: 'Data imported successfully!' }, status: :ok
+      render json: { message: 'Data imported successfully!' }, status: :ok
     else
-      render json: { errors: errors, success: success }
+      render json: { errors: errors, success: success }, status: :ok
     end
   rescue => e
     file_name, line_number = caller.first.split(':')[0..1]
@@ -114,10 +114,9 @@ class AllocationDraftsController < ApplicationController
     end
   end
 
+  private
 
-    private
-
-    def allocation_drafts_params
-      params[:data].permit!
-    end
+  def allocation_drafts_params
+    params[:data].permit!
+  end
 end

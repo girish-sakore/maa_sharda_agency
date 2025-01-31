@@ -1,5 +1,6 @@
 module UserBlock
   class UsersController < ApplicationController
+    include UserHelper
     # prepend_before_action :authorize_request
     before_action :set_user, only: %i[ show update destroy ]
     # skip_before_action :authorize_request, only: :index
@@ -7,7 +8,7 @@ module UserBlock
     def index
       @users = UserBlock::User.where('not TYPE=?', "UserBlock::Admin")
       metadata = { total_users: @users.count}
-      render json: { metadata: metadata, users: serialize_users }, status: :ok
+      render json: { metadata: metadata, users: serialize_users(@users) }, status: :ok
     end
 
     def show
@@ -54,23 +55,6 @@ module UserBlock
 
     def set_user
       @user = User.find(params[:id])
-    end
-
-    def serialize_users
-      users = []
-      @users.each do |user|
-        users << serialize_user(user)
-      end
-      users
-    end
-
-    def serialize_user(user)
-      {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        type: user.type
-      }
     end
 
     # Only allow a list of trusted parameters through.
