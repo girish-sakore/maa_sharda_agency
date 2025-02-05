@@ -4,7 +4,8 @@ class AllocationDraftsController < ApplicationController
 
   def import_allocation
     file_path = params[:file]
-    errors, success = ImportAllocationService.new(file_path).import
+    entity = params[:financial_entity_id] || FinancialEntity.first # Until finalized
+    errors, success = ImportAllocationService.new(file_path, entity).import
     if errors.empty?
       render json: { message: 'Data imported successfully!' }, status: :ok
     else
@@ -16,7 +17,12 @@ class AllocationDraftsController < ApplicationController
   end
 
   def index
-    search = AllocationDraft.ransack(params[:q])
+    allocations = if params[:month].present? && params[:year].present?
+                    AllocationDraft.by_month_year(params[:month], params[:year])
+                  else
+                    AllocationDraft.current_month
+                  end
+    search = allocations.ransack(params[:q])
     data = search.result
 
     page = params[:page] || 1
