@@ -2,14 +2,16 @@
 class ImportAllocationService
   require 'roo'
 
-  def initialize(file_path)
+  def initialize(file_path, financial_entity)
     @file_path = file_path
+    @financial_entity = financial_entity
   end
 
   def import
     errors = []
     success = []
-
+    month = Date.today.month
+    year = Date.today.year
     raise Errno::ENOENT, "No such file or directory @ #{@file_path}" unless File.exist?(@file_path)
 
     excel = Roo::Excelx.new(@file_path)
@@ -17,7 +19,9 @@ class ImportAllocationService
     (2..excel.last_row).each do |i|
       row = excel.row(i)
       begin
-        AllocationDraft.create!(
+        @financial_entity.allocation_drafts.create!(
+          month: month,
+          year: year,
           segment: row[0],
           pool: row[1],
           branch: row[2],

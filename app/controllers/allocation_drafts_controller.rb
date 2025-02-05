@@ -4,11 +4,12 @@ class AllocationDraftsController < ApplicationController
 
   def import_allocation
     file_path = params[:file]
-    errors, success = ImportAllocationService.new(file_path).import
+    entity = params[:financial_entity_id] || FinancialEntity.first # Until finalized
+    errors, success = ImportAllocationService.new(file_path, entity).import
     if errors.empty?
-      render json: { notice: 'Data imported successfully!' }, status: :ok
+      render json: { message: 'Data imported successfully!' }, status: :ok
     else
-      render json: { errors: errors, success: success }
+      render json: { errors: errors, success: success }, status: :ok
     end
   rescue => e
     file_name, line_number = caller.first.split(':')[0..1]
@@ -16,7 +17,12 @@ class AllocationDraftsController < ApplicationController
   end
 
   def index
-    search = AllocationDraft.ransack(params[:q])
+    allocations = if params[:month].present? && params[:year].present?
+                    AllocationDraft.by_month_year(params[:month], params[:year])
+                  else
+                    AllocationDraft.current_month
+                  end
+    search = allocations.ransack(params[:q])
     data = search.result
 
     page = params[:page] || 1
@@ -35,72 +41,60 @@ class AllocationDraftsController < ApplicationController
     render json: { metadata: metadata, data: paginated_data }
   end
 
-  def assign_caller
-    caller_id = params[:caller_id]
-    allocation_draft_ids = params[:allocation_draft_ids]&.map{|x| x.to_i}
-
-    if caller_id.present? && allocation_draft_ids.present?
-      caller = UserBlock::Caller.find_by(id: caller_id)
-      if caller
-        allocation_drafts = AllocationDraft.where(id: allocation_draft_ids)
-        missing_ids = allocation_draft_ids - allocation_drafts.pluck(:id)
-
-        if allocation_drafts.any?
-          # Exclude already assigned drafts
-          drafts_to_update = allocation_drafts
-
-          drafts_to_update.update_all(caller_id: caller_id)
-
-          response_data = {
-            message: "Caller assigned with some conditions",
-            updated: allocation_drafts,
-            not_found: missing_ids
-          }
-
-          render json: response_data, status: :ok
-        else
-          render json: { error: "No valid AllocationDrafts found with the given IDs" }, status: :not_found
-        end
+  def update
+    allocation = AllocationDraft.find(params[:id])
+    if allocation
+      if allocation.update(allocation_drafts_params)
+        render json: { allocation: allocation, message: 'data updated'}, status: :ok
       else
-        render json: { error: "Caller not found" }, status: :not_found
+        render json: { message: 'error saving', error: allocation.errors }, status: :unprocessable_entity
       end
-    else
-      render json: { error: "Caller ID and Allocation Draft IDs are required" }, status: :bad_request
     end
   end
+
+  def assign_caller
+    caller_id = params[:caller_id]
+    allocation_draft_ids = params[:allocation_draft_ids]&.map(&:to_i)
+  
+    return render json: { error: "Caller ID and Allocation Draft IDs are required" }, status: :bad_request unless caller_id.present? && allocation_draft_ids.present?
+  
+    caller = UserBlock::Caller.find_by(id: caller_id)
+    return render json: { error: "Caller not found" }, status: :not_found unless caller
+  
+    allocation_drafts = AllocationDraft.where(id: allocation_draft_ids)
+    found_ids = allocation_drafts.pluck(:id)
+    missing_ids = allocation_draft_ids - found_ids
+  
+    return render json: { error: "No valid AllocationDrafts found with the given IDs" }, status: :not_found if allocation_drafts.empty?
+  
+    allocation_drafts.update_all(caller_id: caller_id, caller_name: caller.name)
+  
+    render json: { message: "Caller assigned successfully", updated_count: found_ids.size, not_found: missing_ids }, status: :ok
+  end  
 
   def assign_executive
     executive_id = params[:executive_id]
-    allocation_draft_ids = params[:allocation_draft_ids]&.map{|x| x.to_i}
+    allocation_draft_ids = params[:allocation_draft_ids]&.map(&:to_i)
   
-    if executive_id.present? && allocation_draft_ids.present?
-      executive = UserBlock::Executive.find_by(id: executive_id)
-      if executive
-        allocation_drafts = AllocationDraft.where(id: allocation_draft_ids)
-        missing_ids = allocation_draft_ids - allocation_drafts.pluck(:id)
+    return render json: { error: "Executive ID and Allocation Draft IDs are required" }, status: :bad_request unless executive_id.present? && allocation_draft_ids.present?
   
-        if allocation_drafts.any?
-          # Exclude already assigned drafts
-          drafts_to_update = allocation_drafts
+    executive = UserBlock::Executive.find_by(id: executive_id)
+    return render json: { error: "Executive not found" }, status: :not_found unless executive
   
-          drafts_to_update.update_all(executive_id: executive_id)
+    allocation_drafts = AllocationDraft.where(id: allocation_draft_ids)
+    found_ids = allocation_drafts.pluck(:id)
+    missing_ids = allocation_draft_ids - found_ids
   
-          response_data = {
-            message: "Executive assigned with some conditions",
-            updated: allocation_drafts,
-            not_found: missing_ids
-          }
+    return render json: { error: "No valid AllocationDrafts found with the given IDs" }, status: :not_found if allocation_drafts.empty?
   
-          render json: response_data, status: :ok
-        else
-          render json: { error: "No valid AllocationDrafts found with the given IDs" }, status: :not_found
-        end
-      else
-        render json: { error: "Executive not found" }, status: :not_found
-      end
-    else
-      render json: { error: "Executive ID and Allocation Draft IDs are required" }, status: :bad_request
-    end
-  end
+    allocation_drafts.update_all(executive_id: executive_id, fos_name: executive.name)
+  
+    render json: { message: "Executive assigned successfully", updated_count: found_ids.size, not_found: missing_ids }, status: :ok
+  end  
 
+  private
+
+  def allocation_drafts_params
+    params[:data].permit!
+  end
 end

@@ -27,6 +27,19 @@ module UserBlock
       is_a?(UserBlock::Executive)
     end
 
+    def role_name
+      case self.type
+      when 'UserBlock::Admin'
+        'Admin'
+      when 'UserBlock::Caller'
+        'Caller'
+      when 'UserBlock::Executive'
+        'Executive'
+      else
+        'Unknown'
+      end
+    end
+
     private
 
     def valid_type

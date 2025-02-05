@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :financial_entities
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
 
@@ -17,6 +18,11 @@ Rails.application.routes.draw do
       post :import_allocation
       post :assign_caller
       post :assign_executive
+    end
+  end
+  resources :dashboards do
+    collection do
+      get :get_allocations
     end
   end
 
