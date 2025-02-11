@@ -50,7 +50,12 @@ group :development, :test do
   gem 'rspec-rails', '~> 5.0'
   gem 'rubocop'
   gem 'simplecov'
+  # swagger
   gem 'rswag'
+  gem 'rswag-api'
+  gem 'rswag-ui'
+  gem 'rswag-specs'
+
 end
 
 gem 'jwt'

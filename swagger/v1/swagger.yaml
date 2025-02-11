@@ -4,51 +4,33 @@ info:
   title: API V1
   version: v1
 paths:
-  "/user_block/users":
-    get:
-      summary: list users
-      responses:
-        '200':
-          description: successful
+  "/login":
     post:
-      summary: create user
+      summary: User Login
+      tags:
+      - Authentication
+      operationId: loginUser
+      parameters: []
       responses:
         '200':
-          description: successful
-  "/user_block/users/{id}":
-    parameters:
-    - name: id
-      in: path
-      description: id
-      required: true
-      schema:
-        type: string
-    get:
-      summary: show user
-      responses:
-        '200':
-          description: successful
-    patch:
-      summary: update user
-      responses:
-        '200':
-          description: successful
-    put:
-      summary: update user
-      responses:
-        '200':
-          description: successful
-    delete:
-      summary: delete user
-      responses:
-        '200':
-          description: successful
-  "/sign_up":
-    post:
-      summary: create user
-      responses:
-        '200':
-          description: successful
+          description: User logged in successfully
+        '401':
+          description: Missing email and password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: test@example.com
+                password:
+                  type: string
+                  example: password123
+              required:
+              - email
+              - password
 servers:
 - url: https://{defaultHost}
   variables:
