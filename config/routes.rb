@@ -20,11 +20,15 @@ Rails.application.routes.draw do
       post :assign_executive
     end
   end
+
   resources :dashboards do
     collection do
       get :get_allocations
     end
   end
+
+  resources :feedback_codes
+  resources :feedback_sub_codes
 
   # No token required
   get 'types', to: 'public_apis#types'
