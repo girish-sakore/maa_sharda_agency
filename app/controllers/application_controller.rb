@@ -35,10 +35,10 @@ class ApplicationController < ActionController::API
   def render_error(exception, status:, custom_message: nil)
     file_name, line_number = exception.backtrace.first.split(':')
     render json: {
-      error: custom_message || status_message(status),
+      error: custom_message || 'Something went wrong',
       exception: exception.message,
       trace: "#{file_name}:#{line_number}"
-    }, status: status
+    }, status: status || status_message(status)
   end
 
   # Specific exception handlers

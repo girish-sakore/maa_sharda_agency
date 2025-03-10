@@ -1,5 +1,5 @@
 class FeedbackSubCode < ApplicationRecord
-  belongs_to :feedback_code
+  belongs_to :feedback_code, class_name: 'FeedbackCode'
 
   belongs_to :feedback_code
   validates :sub_code, presence: true

@@ -3,6 +3,8 @@ class AllocationDraft < ApplicationRecord
   belongs_to :caller, class_name: 'UserBlock::Caller', optional: true
   belongs_to :executive, class_name: 'UserBlock::Executive', optional: true
   belongs_to :financial_entity
+  has_many :feedbacks, dependent: :destroy
+
   # Validations
   validates :customer_name, :bkt, :zipcode, :agreement_id, presence: true
   validates :caller_id, presence: true, if: :assigned_to_caller?
