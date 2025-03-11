@@ -77,7 +77,7 @@ class FeedbacksController < ApplicationController
       feedback += ", Settlement amount #{@feedback.settlement_amount}" unless @feedback.settlement_amount.nil?
       feedback += ", Settlement date #{@feedback.settlement_date}" unless @feedback.settlement_date.nil?
       feedback += ", New address #{@feedback.new_address}" unless @feedback.new_address.nil?
-      feedback += ", looged at: #{Time.now.to_s}"
+      feedback += ", logged at: #{Time.now.to_s}"
 
       allocation_draft.update!(
         res: params[:feedback][:resolution],

@@ -22,8 +22,10 @@ class AllocationDraftsController < ApplicationController
                   else
                     AllocationDraft.current_month
                   end
-    return render json: { data: allocations } if params[:data_type] == 'pivot'
 
+    return render json: { data: allocations } if params[:data_type] == 'pivot'
+    
+    allocations = allocations.reorder(updated_at: :desc)
     search = allocations.ransack(params[:q])
     data = search.result
 
