@@ -28,22 +28,22 @@ class FeedbacksController < ApplicationController
       # or any other reason
       # render json: { message: 'Not allowed' }, status: :bad_request
       
-      code = params[:code]
+      code = params[:feedback][:code]
       feedback_code = FeedbackCode.find_by(code: code)
       @feedback = allocation_draft.feedbacks.new(feedback_params.merge({:feedback_code_id => feedback_code.id}))
       
       if @feedback.save
         update_allocation_draft(allocation_draft)
-        render json: @feedback, status: :created
+        render json: {message: 'Feedback added successfully', feedback: @feedback}, status: :created
       else
-        render json: @feedback.errors, status: :unprocessable_entity
+        render json: { message: 'Not saved, Please check again!!', errors: @feedback.errors }, status: :unprocessable_entity
       end
     else
       render json: { message: 'Allocation not found'}, status: :unprocessable_entity 
     end
   rescue => e
     # render json: { message: 'something went wrong', errors: e}, status: :bad_request
-    render_error(exception)
+    render_error(e)
   end
 
   def update
@@ -64,7 +64,7 @@ class FeedbacksController < ApplicationController
     end
 
     def feedback_params
-      params.require(:feedback).permit!
+      params.require(:feedback).permit(:amount, :remarks, :next_payment_date, :ptp_date, :settlement_amount, :settlement_date, :new_address)
     end
 
     def update_allocation_draft(allocation_draft)
@@ -80,6 +80,7 @@ class FeedbacksController < ApplicationController
       feedback += ", looged at: #{Time.now.to_s}"
 
       allocation_draft.update!(
+        res: params[:feedback][:resolution],
         f_code: code,
         ptp_date: @feedback.ptp_date,
         feedback: feedback,

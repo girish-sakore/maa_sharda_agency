@@ -32,7 +32,7 @@ class ApplicationController < ActionController::API
   end
 
   # General error response
-  def render_error(exception, status:, custom_message: nil)
+  def render_error(exception, status: :internal_server_error, custom_message: nil)
     file_name, line_number = exception.backtrace.first.split(':')
     render json: {
       error: custom_message || 'Something went wrong',
