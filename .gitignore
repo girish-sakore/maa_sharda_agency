@@ -34,3 +34,5 @@
 .keep
 /coverage
 db/schema.rb
+
+/config/credentials/development.key
