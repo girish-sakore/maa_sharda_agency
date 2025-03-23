@@ -1,0 +1,43 @@
+# Ignore local bundle configuration
+.bundle
+
+# Ignore log files and temp files
+log/*
+tmp/*
+!log/.keep
+!tmp/.keep
+
+# Ignore system-specific files
+.DS_Store
+.git
+.gitignore
+node_modules
+yarn-error.log
+yarn.lock
+package-lock.json
+
+# Ignore database-related files
+db/*.sqlite3
+db/*.sqlite3-journal
+db/schema.rb
+db/development.sqlite3
+db/development.sqlite3-journal
+
+# Ignore test coverage reports
+coverage
+spec/reports
+
+# Ignore compiled assets
+public/assets
+public/packs
+public/packs-test
+
+# Ignore environment and secrets
+.env
+.env.development
+.env.production
+.env.test
+config/master.key
+config/credentials.yml.enc
+
+.vscode
