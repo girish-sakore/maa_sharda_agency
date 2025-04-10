@@ -32,6 +32,22 @@ Rails.application.routes.draw do
   resources :feedback_sub_codes
   resources :feedbacks
 
+  resources :attendances, only: [:index, :create, :update, :show]
+  get 'users/:id/attendances', to: 'attendances#user_attendance', as: :user_attendance
+
+  namespace :attendance do
+    post :check_in
+    patch :check_out
+  end
+
+  # Reports routes
+  namespace :reports do
+    namespace :attendance do
+      get :daily
+      get :monthly
+    end
+  end
+
   # No token required
   get 'types', to: 'public_apis#types'
 end

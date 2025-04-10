@@ -4,5 +4,6 @@ FactoryBot.define do
     email { Faker::Internet.unique.email }
     password { 'password' }
     type { 'UserBlock::Executive' }
+    mobile_number { Faker::PhoneNumber.subscriber_number(length:10) }
   end
 end

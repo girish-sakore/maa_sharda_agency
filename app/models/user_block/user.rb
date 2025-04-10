@@ -6,6 +6,9 @@ module UserBlock
 
     enum status: { inactive: 0, active: 1, pending: 2, suspended: 3 }
 
+    # Associations
+    has_many :attendances, dependent: :destroy
+
     # Callbacks
     before_save { email.downcase}
 
@@ -31,6 +34,10 @@ module UserBlock
 
     def is_executive?
       is_a?(UserBlock::Executive)
+    end
+
+    def can_mark_attendance?
+      is_caller? or is_executive?
     end
 
     def role_name
