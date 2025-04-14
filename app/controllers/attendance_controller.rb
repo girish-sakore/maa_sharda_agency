@@ -1,6 +1,17 @@
 class AttendanceController < ApplicationController
   before_action :ensure_role_is_allowed!
 
+  def today
+    # user = @current_user || User.find(params[:user_id])
+    today_attendance = Attendance.find_by(user: @current_user, date: Date.current)
+  
+    if today_attendance
+      render json: today_attendance
+    else
+      render json: { status: 'not_found' }
+    end
+  end
+
   def check_in
     today = Date.today
 
