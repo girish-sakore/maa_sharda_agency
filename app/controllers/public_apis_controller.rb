@@ -6,6 +6,11 @@ class PublicApisController < ApplicationController
     render json: { account_types: account_types }, status: :ok
   end
 
+  def get_searchable_columns
+    searchable_columns = AllocationDraft.column_names.reject { |str| (str.include?("_id") && str != "agreement_id") }
+    render json: { searchable_columns: searchable_columns }, status: :ok
+  end
+
   private
 
   def account_types

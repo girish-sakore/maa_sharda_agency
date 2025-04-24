@@ -58,4 +58,5 @@ Rails.application.routes.draw do
 
   # No token required
   get 'types', to: 'public_apis#types'
+  get 'get_searchable_columns', to: 'public_apis#get_searchable_columns'
 end
