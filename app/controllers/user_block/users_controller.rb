@@ -1,7 +1,6 @@
 module UserBlock
   class UsersController < ApplicationController
     include UserHelper
-    # prepend_before_action :authorize_request
     before_action :set_user, only: %i[ show update destroy ]
     # skip_before_action :authorize_request, only: :index
 
@@ -20,7 +19,7 @@ module UserBlock
         return permission_denied
       end
 
-      case params[:type]
+      case params[:type].downcase
       when "admin"
         @user = Admin.new(required_user_params)
       when "caller"
@@ -32,23 +31,23 @@ module UserBlock
       end
 
       if @user.save
-        render json: serialize_user(@user), status: :created
+        render json: { message: "Yay! User added.", user:serialize_user(@user) }, status: :created
       else
-        render json: @user.errors, status: :unprocessable_entity
+        render json: { message: "Uh..Oh! Please check the fields again...", errors: @user.errors }, status: :unprocessable_entity
       end
     end
 
     def update
       if @user.update(required_user_params)
-        render json: serialize_user(@user)
+        render json: { message: "Yay! User updated.", user: serialize_user(@user) }
       else
-        render json: @user.errors, status: :unprocessable_entity
+        render json: { message: "Uh..Oh! Please check the fields again...", errors: @user.errors}, status: :unprocessable_entity
       end
     end
 
     def destroy
       @user.destroy
-      render json: serialize_user(@user), status: :ok
+      render json: { message: "User deleted...", user: serialize_user(@user)}, status: :ok
     end
 
     private
@@ -59,7 +58,7 @@ module UserBlock
 
     # Only allow a list of trusted parameters through.
     def required_user_params
-      params.permit(:email, :password, :name)
+      params.permit(:email, :password, :name, :mobile_number, :alt_mobile_number, :status)
     end
   end
 end
