@@ -4,7 +4,7 @@ class AllocationDraftsController < ApplicationController
 
   def import_allocation
     file_path = params[:file]
-    entity = params[:financial_entity_id] || FinancialEntity.first # Until finalized
+    entity = FinancialEntity.find(params[:financial_entity_id])
     errors, success = ImportAllocationService.new(file_path, entity).import
     if errors.empty?
       render json: { message: 'Data imported successfully!' }, status: :ok

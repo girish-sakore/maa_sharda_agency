@@ -48,6 +48,6 @@ class FinancialEntitiesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def financial_entity_params
-      params.fetch(:financial_entity, {})
+      params.permit(:name, :code, :contact_number, :email)
     end
 end
