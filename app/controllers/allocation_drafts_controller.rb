@@ -20,7 +20,8 @@ class AllocationDraftsController < ApplicationController
     allocations = if params[:month].present? && params[:year].present?
                     AllocationDraft.by_month_year(params[:month], params[:year])
                   else
-                    AllocationDraft.current_month
+                    # AllocationDraft.current_month
+                    AllocationDraft.all
                   end
 
     return render json: { data: allocations } if params[:data_type] == 'pivot'
