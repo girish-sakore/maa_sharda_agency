@@ -67,6 +67,18 @@ class AllocationDraftsController < ApplicationController
     end
   end
 
+  def destroy_multiple
+    allocation_ids = params[:allocation_draft_ids]&.map(&:to_i)
+    puts "allocation_ids --- #{allocation_ids}"
+    return render json: { error: "Allocation Draft IDs are required" }, status: :bad_request unless allocation_ids.present?
+    allocations = AllocationDraft.where(id: allocation_ids)
+    found_ids = allocations.pluck(:id)
+    missing_ids = allocation_ids - found_ids
+    return render json: { error: "No valid AllocationDrafts found with the given IDs" }, status: :not_found if allocations.empty?
+    allocations.destroy_all
+    render json: { message: "AllocationDrafts deleted successfully", deleted_count: found_ids.size, not_found: missing_ids }, status: :ok
+  end
+
   def assign_caller
     caller_id = params[:caller_id]
     allocation_draft_ids = params[:allocation_draft_ids]&.map(&:to_i)
