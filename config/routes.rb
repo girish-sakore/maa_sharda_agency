@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       post :assign_caller
       post :assign_executive
       post :update_feedback
+      post :destroy_multiple
     end
   end
   
