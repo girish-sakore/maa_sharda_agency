@@ -34,3 +34,4 @@
 .keep
 /coverage
 db/schema.rb
+Gemfile.lock
