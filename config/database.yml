@@ -51,8 +51,8 @@ test:
 #
 production:
   <<: *default
-  host: dpg-cp1fhnmct0pc73cvbu50-a
+    #  host: dpg-cp1fhnmct0pc73cvbu50-a
   database: maa_sharda_app_production
-  username: maa_sharda_app
-  password: tKjjF9SPGNLgYDmETuIDC85maYnqlxrl
-  port: 5432
+    #  username: maa_sharda_app
+    #  password: tKjjF9SPGNLgYDmETuIDC85maYnqlxrl
+    # port: 5432
