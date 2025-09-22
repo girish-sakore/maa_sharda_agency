@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
+  #mount Rswag::Ui::Engine => '/api-docs'
+  #mount Rswag::Api::Engine => '/api-docs'
   
   post 'sign_up', to: 'user_block/users#create'
   post 'login', to: 'logins#create'
