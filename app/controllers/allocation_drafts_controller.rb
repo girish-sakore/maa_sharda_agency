@@ -57,6 +57,16 @@ class AllocationDraftsController < ApplicationController
     end
   end
 
+  def destroy
+    allocation = AllocationDraft.find(params[:id])
+    if allocation
+      allocation.destroy
+      render json: { message: 'data deleted'}, status: :ok
+    else
+      render json: { message: 'record not found' }, status: :not_found
+    end
+  end
+
   def assign_caller
     caller_id = params[:caller_id]
     allocation_draft_ids = params[:allocation_draft_ids]&.map(&:to_i)
